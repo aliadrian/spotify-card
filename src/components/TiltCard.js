@@ -22,7 +22,7 @@ const TiltCard = () => {
     };
 
     return (
-        <div className="grid place-content-center translate-y-[7.5vh]">
+        <div className="grid place-content-center translate-y-[10vh]">
             <div className="flex items-center justify-center"
                 style={{
                     transform: `rotateX(${tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`,
