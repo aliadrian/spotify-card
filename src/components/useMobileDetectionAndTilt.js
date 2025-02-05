@@ -1,38 +1,56 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const useMobileDetectionAndTilt = () => {
-    const [isMobile, setIsMobile] = useState(false);
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const checkMobile = () => {
-            const userAgentCheck = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const touchSupportCheck = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-            setIsMobile(userAgentCheck || touchSupportCheck);
+        // Detect if user is on mobile
+        const checkIfMobile = () => {
+            setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
+        };
+        checkIfMobile();
+
+        // ✅ Request motion permissions on iOS
+        const requestPermission = async () => {
+            if (typeof DeviceMotionEvent.requestPermission === "function") {
+                try {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission === "granted") {
+                        console.log("✅ Motion permission granted!");
+                        startListening();
+                    } else {
+                        console.warn("⚠️ Motion permission denied.");
+                    }
+                } catch (error) {
+                    console.error("❌ Error requesting motion permission:", error);
+                }
+            } else {
+                startListening(); // Android and non-iOS devices don't need permission
+            }
         };
 
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
+        // ✅ Start listening to motion events
+        const startListening = () => {
+            window.addEventListener("deviceorientation", handleMotion);
+        };
 
-    useEffect(() => {
-        if (!isMobile) return;
-
-        const handleOrientation = (event) => {
-            const { beta, gamma } = event; // Forward/backward and left/right tilt
-            const maxTilt = 30; // Limit the tilt effect
-
+        const handleMotion = (event) => {
             setTilt({
-                x: Math.max(-maxTilt, Math.min(maxTilt, gamma)), // Side tilting
-                y: Math.max(-maxTilt, Math.min(maxTilt, beta - 90)), // Forward/backward
+                x: event.gamma || 0, // Left/right tilt
+                y: event.beta || 0, // Forward/backward tilt
             });
         };
 
-        window.addEventListener("deviceorientation", handleOrientation);
+        // Only request permission on mobile
+        if (isMobile) {
+            requestPermission();
+        }
 
-        return () => window.removeEventListener("deviceorientation", handleOrientation);
-    }, [isMobile]);
+        return () => {
+            window.removeEventListener("deviceorientation", handleMotion);
+        };
+    }, [isMobile]); // ✅ Added `isMobile` to dependencies
 
     return { isMobile, tilt };
 };
