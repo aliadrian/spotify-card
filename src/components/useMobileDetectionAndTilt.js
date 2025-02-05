@@ -41,9 +41,16 @@ const useMobileDetectionAndTilt = () => {
         };
 
         const handleMotion = (event) => {
+            const rawX = event.gamma || 0; // Left/right tilt
+            const rawY = event.beta || 0; // Forward/backward tilt
+
+            // ✅ Offset Y to assume the user holds the phone at 45 degrees
+            const adjustedX = rawX; // No need to adjust X much
+            const adjustedY = rawY - 45; // Assuming a 45-degree natural hold
+
             setTilt({
-                x: event.gamma || 0, // Left/right tilt
-                y: event.beta || 0, // Forward/backward tilt
+                x: adjustedX,
+                y: adjustedY,
             });
         };
 
