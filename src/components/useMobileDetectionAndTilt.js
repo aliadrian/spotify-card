@@ -3,56 +3,61 @@ import { useEffect, useState } from "react";
 const useMobileDetectionAndTilt = () => {
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
     const [isMobile, setIsMobile] = useState(false);
-    const [hasPermission, setHasPermission] = useState(
-        localStorage.getItem("motion_permission") === "granted"
-    );
+    const [hasPermission, setHasPermission] = useState(false);
 
     useEffect(() => {
-        setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
-    }, []);
+        // Detect if user is on mobile
+        const checkIfMobile = () => {
+            setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
+        };
+        checkIfMobile();
 
-    const requestPermission = async () => {
-        if (typeof DeviceMotionEvent.requestPermission === "function") {
-            try {
-                const permission = await DeviceMotionEvent.requestPermission();
-                if (permission === "granted") {
-                    console.log("✅ Motion permission granted!");
-                    localStorage.setItem("motion_permission", "granted");
-                    setHasPermission(true);
-                } else {
-                    console.warn("⚠️ Motion permission denied.");
-                    localStorage.removeItem("motion_permission");
-                    setHasPermission(false);
+        // ✅ Function to request motion permission on iOS
+        const requestPermission = async () => {
+            if (typeof DeviceMotionEvent.requestPermission === "function") {
+                try {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission === "granted") {
+                        console.log("✅ Motion permission granted!");
+                        setHasPermission(true);
+                        startListening();
+                    } else {
+                        console.warn("⚠️ Motion permission denied.");
+                        setHasPermission(false);
+                    }
+                } catch (error) {
+                    console.error("❌ Error requesting motion permission:", error);
                 }
-            } catch (error) {
-                console.error("❌ Error requesting motion permission:", error);
+            } else {
+                // ✅ Android & older iOS versions don't require permission
+                setHasPermission(true);
+                startListening();
             }
-        } else {
-            localStorage.setItem("motion_permission", "granted");
-            setHasPermission(true);
-        }
-    };
-
-    useEffect(() => {
-        if (!hasPermission) return;
-
-        const handleMotion = (event) => {
-            const rawX = event.gamma || 0;
-            const rawY = event.beta || 0;
-            const adjustedX = rawX;
-            const adjustedY = rawY - 45;
-
-            setTilt({ x: adjustedX, y: adjustedY });
         };
 
-        window.addEventListener("deviceorientation", handleMotion);
+        // ✅ Start listening to motion events
+        const startListening = () => {
+            window.addEventListener("deviceorientation", handleMotion);
+        };
+
+        const handleMotion = (event) => {
+            setTilt({
+                x: event.gamma || 0, // Left/right tilt
+                y: event.beta || 0, // Forward/backward tilt
+            });
+        };
+
+        // ✅ Only request permission on mobile
+        if (isMobile) {
+            requestPermission();
+        }
 
         return () => {
             window.removeEventListener("deviceorientation", handleMotion);
         };
-    }, [hasPermission]);
+    }, [isMobile]);
 
-    return { isMobile, hasPermission, requestPermission };
+    return { isMobile, tilt, hasPermission };
 };
 
 export default useMobileDetectionAndTilt;
