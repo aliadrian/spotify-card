@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useMobileDetectionAndTilt from "./useMobileDetectionandTilt";
+import useMobileDetectionAndTilt from "./useMobileDetectioAndTilt";
 
 const TiltCard = () => {
     const { isMobile, tilt, hasPermission, requestPermission } = useMobileDetectionAndTilt();
