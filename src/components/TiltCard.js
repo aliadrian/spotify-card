@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useMobileDetectionAndTilt from "./useMobileDetectionAndTilt";
 
 const TiltCard = () => {
     const { isMobile, tilt, hasPermission, requestPermission } = useMobileDetectionAndTilt();
+    const [hasReloaded, setHasReloaded] = useState(
+        localStorage.getItem("hasReloaded") === "true"
+    );
+
+    useEffect(() => {
+        if (!hasReloaded && hasPermission) {
+            localStorage.setItem("hasReloaded", "true");
+            setHasReloaded(true);
+        }
+    }, [hasPermission]);
 
     const handleReload = () => {
+        localStorage.setItem("hasReloaded", "true"); // Ensure state is saved before reload
         window.location.reload();
     };
 
@@ -21,7 +32,7 @@ const TiltCard = () => {
                     </button>
                 )}
 
-                {isMobile && hasPermission && (
+                {isMobile && hasPermission && !hasReloaded && (
                     <button onClick={handleReload} className="p-3 bg-green-500 text-white rounded-lg">
                         Reload Page
                     </button>
