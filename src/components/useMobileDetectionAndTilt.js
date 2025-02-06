@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 const useMobileDetectionAndTilt = () => {
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
     const [isMobile, setIsMobile] = useState(false);
+    const [hasPermission, setHasPermission] = useState(
+        localStorage.getItem("motionPermission") === "granted"
+    );
 
     useEffect(() => {
         const checkIfMobile = () => {
@@ -16,6 +19,8 @@ const useMobileDetectionAndTilt = () => {
                     const permission = await DeviceMotionEvent.requestPermission();
                     if (permission === "granted") {
                         console.log("✅ Motion permission granted!");
+                        localStorage.setItem("motionPermission", "granted");
+                        setHasPermission(true);
                         startListening();
                     } else {
                         console.warn("⚠️ Motion permission denied.");
@@ -24,6 +29,7 @@ const useMobileDetectionAndTilt = () => {
                     console.error("❌ Error requesting motion permission:", error);
                 }
             } else {
+                setHasPermission(true);
                 startListening();
             }
         };
@@ -37,25 +43,22 @@ const useMobileDetectionAndTilt = () => {
             const rawY = event.beta || 0; // Forward/backward tilt
 
             // ✅ Offset Y to assume the user holds the phone at 45 degrees
-            const adjustedX = rawX; // No need to adjust X much
-            const adjustedY = rawY - 45; // Assuming a 45-degree natural hold
+            const adjustedX = rawX;
+            const adjustedY = rawY - 45;
 
-            setTilt({
-                x: adjustedX,
-                y: adjustedY,
-            });
+            setTilt({ x: adjustedX, y: adjustedY });
         };
 
-        if (isMobile) {
-            requestPermission();
+        if (isMobile && hasPermission) {
+            startListening();
         }
 
         return () => {
             window.removeEventListener("deviceorientation", handleMotion);
         };
-    }, [isMobile]);
+    }, [isMobile, hasPermission]);
 
-    return { isMobile, tilt };
+    return { isMobile, tilt, hasPermission, requestPermission };
 };
 
 export default useMobileDetectionAndTilt;

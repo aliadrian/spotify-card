@@ -1,24 +1,11 @@
 import { useState } from "react";
-import useMobileDetectionAndTilt from "./useMobileDetectionAndTilt";
+import useMobileDetectionAndTilt from "./useMobileDetectionandTilt";
 
 const TiltCard = () => {
-    const { isMobile, tilt, hasPermission } = useMobileDetectionAndTilt();
-    const [permissionRequested, setPermissionRequested] = useState(false);
+    const { isMobile, tilt, hasPermission, requestPermission } = useMobileDetectionAndTilt();
 
-    const requestMotionPermission = async () => {
-        if (typeof DeviceMotionEvent.requestPermission === "function") {
-            try {
-                const permission = await DeviceMotionEvent.requestPermission();
-                if (permission === "granted") {
-                    console.log("✅ Motion permission granted!");
-                    setPermissionRequested(true);
-                } else {
-                    console.warn("⚠️ Motion permission denied.");
-                }
-            } catch (error) {
-                console.error("❌ Error requesting motion permission:", error);
-            }
-        }
+    const handleReload = () => {
+        window.location.reload();
     };
 
     return (
@@ -28,11 +15,17 @@ const TiltCard = () => {
                     transform: `rotateX(${tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`,
                 }}
             >
-            {isMobile && !hasPermission && !permissionRequested && (
-                <button onClick={requestMotionPermission} className="p-3 bg-blue-500 text-white rounded-lg">
-                    Enable Motion Tilt
-                </button>
-            )}
+                {isMobile && !hasPermission && (
+                    <button onClick={requestPermission} className="p-3 bg-blue-500 text-white rounded-lg">
+                        Enable Motion Tilt
+                    </button>
+                )}
+
+                {isMobile && hasPermission && (
+                    <button onClick={handleReload} className="p-3 bg-green-500 text-white rounded-lg">
+                        Reload Page
+                    </button>
+                )}
             </div>
         </div>
     );
