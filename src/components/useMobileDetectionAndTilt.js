@@ -13,27 +13,6 @@ const useMobileDetectionAndTilt = () => {
         };
         checkIfMobile();
 
-        const requestPermission = async () => {
-            if (typeof DeviceMotionEvent.requestPermission === "function") {
-                try {
-                    const permission = await DeviceMotionEvent.requestPermission();
-                    if (permission === "granted") {
-                        console.log("✅ Motion permission granted!");
-                        localStorage.setItem("motionPermission", "granted");
-                        setHasPermission(true);
-                        startListening();
-                    } else {
-                        console.warn("⚠️ Motion permission denied.");
-                    }
-                } catch (error) {
-                    console.error("❌ Error requesting motion permission:", error);
-                }
-            } else {
-                setHasPermission(true);
-                startListening();
-            }
-        };
-
         const startListening = () => {
             window.addEventListener("deviceorientation", handleMotion);
         };
@@ -57,6 +36,25 @@ const useMobileDetectionAndTilt = () => {
             window.removeEventListener("deviceorientation", handleMotion);
         };
     }, [isMobile, hasPermission]);
+
+    const requestPermission = async () => {
+        if (typeof DeviceMotionEvent.requestPermission === "function") {
+            try {
+                const permission = await DeviceMotionEvent.requestPermission();
+                if (permission === "granted") {
+                    console.log("✅ Motion permission granted!");
+                    localStorage.setItem("motionPermission", "granted");
+                    setHasPermission(true);
+                } else {
+                    console.warn("⚠️ Motion permission denied.");
+                }
+            } catch (error) {
+                console.error("❌ Error requesting motion permission:", error);
+            }
+        } else {
+            setHasPermission(true);
+        }
+    };
 
     return { isMobile, tilt, hasPermission, requestPermission };
 };
