@@ -37,7 +37,7 @@ export function withClick(FrontComponent, BackComponent) {
             const mouseX = (event.clientX - centerX) / (elementWidth / 2);
             const mouseY = (event.clientY - centerY) / (elementHeight / 2);
 
-            const maxTilt = 15; // Max tilt angle
+            const maxTilt = 7; // Max tilt angle
             dx.set(mouseY * maxTilt); // Rotate around X-axis (tilt forward/backward)
             dy.set(-mouseX * maxTilt); // Rotate around Y-axis (tilt left/right)
         };
