@@ -21,11 +21,7 @@ const TiltCard = () => {
 
     return (
         <div className="grid place-content-center translate-y-[10vh]">
-            <div className="flex items-center justify-center"
-                style={{
-                    transform: `rotateX(${tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`,
-                }}
-            >
+            <div className="flex items-center justify-center">
                 {isMobile && !hasPermission && (
                     <button onClick={requestPermission} className="p-3 bg-blue-500 text-white rounded-lg">
                         Enable Motion Tilt
