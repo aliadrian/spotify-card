@@ -21,7 +21,7 @@ const useMobileDetectionAndTilt = () => {
             const rawX = event.gamma || 0; // Left/right tilt
             const rawY = event.beta || 0; // Forward/backward tilt
 
-            // ✅ Offset Y to assume the user holds the phone at 45 degrees
+            // Offset Y to assume the user holds the phone at 45 degrees
             const adjustedX = rawX;
             const adjustedY = rawY - 45;
 
@@ -42,14 +42,14 @@ const useMobileDetectionAndTilt = () => {
             try {
                 const permission = await DeviceMotionEvent.requestPermission();
                 if (permission === "granted") {
-                    console.log("✅ Motion permission granted!");
+                    console.log("Motion permission granted!");
                     localStorage.setItem("motionPermission", "granted");
                     setHasPermission(true);
                 } else {
                     console.warn("⚠️ Motion permission denied.");
                 }
             } catch (error) {
-                console.error("❌ Error requesting motion permission:", error);
+                console.error("Error requesting motion permission:", error);
             }
         } else {
             setHasPermission(true);

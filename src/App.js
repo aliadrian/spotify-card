@@ -8,10 +8,10 @@ function App() {
 
   return (
     <div className="App bg-[#222] grid place-content-center h-[100dvh]">
-        <div className="w-[300px] h-[350px] hover:cursor-pointer">
-          <ClickableCard />
-        </div>
-          <TiltCard />
+      <div className="w-[300px] h-[396px] hover:cursor-pointer">
+        <ClickableCard />
+      </div>
+      <TiltCard />
     </div>
   );
 }
