@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { motion, useSpring } from "framer-motion";
 import useMobileDetectionAndTilt from "./useMobileDetectionAndTilt";
+import { useNowPlaying } from "./NowPlayingContext";
 
 // Spring animation parameters
 const spring = {
@@ -11,12 +12,21 @@ const spring = {
 
 export function withClick(FrontComponent, BackComponent) {
   return function (props) {
+    const { nowPlaying, setNowPlaying } = useNowPlaying();
     const [isFlipped, setIsFlipped] = useState(false);
     const [nowPlayingForBack, setNowPlayingForBack] = useState(null);
     const ref = useRef(null);
     const { isMobile, tilt } = useMobileDetectionAndTilt(); // Detect mobile + tilt
 
-    // console.log("withClick Rendering. nowPlayingForBack:", nowPlayingForBack); // Debug Log
+    useEffect(() => {
+      // Prevent infinite loop: update only if `nowPlayingForBack` is valid and different
+      if (
+        nowPlayingForBack &&
+        (!nowPlaying || nowPlaying.song !== nowPlayingForBack.song)
+      ) {
+        setNowPlaying(nowPlayingForBack);
+      }
+    }, [nowPlayingForBack, nowPlaying, setNowPlaying]);
 
     const handleClick = () => setIsFlipped((prevState) => !prevState);
 
@@ -101,7 +111,6 @@ export function withClick(FrontComponent, BackComponent) {
                 zIndex: isFlipped ? 0 : 1,
                 backfaceVisibility: "hidden",
                 position: "absolute",
-                marginTop: nowPlayingForBack ? "0px" : "50%",
               }}
             >
               <FrontComponent
@@ -120,7 +129,6 @@ export function withClick(FrontComponent, BackComponent) {
                 zIndex: isFlipped ? 1 : 0,
                 backfaceVisibility: "hidden",
                 position: "absolute",
-                marginTop: nowPlayingForBack ? "0px" : "50%",
               }}
             >
               <BackComponent
