@@ -17,16 +17,37 @@ export function withClick(FrontComponent, BackComponent) {
     const [nowPlayingForBack, setNowPlayingForBack] = useState(null);
     const ref = useRef(null);
     const { isMobile, tilt } = useMobileDetectionAndTilt(); // Detect mobile + tilt
+    const [progress, setProgress] = useState(nowPlaying?.progrssMs || 0);
 
     useEffect(() => {
       // Prevent infinite loop: update only if `nowPlayingForBack` is valid and different
       if (
         nowPlayingForBack &&
-        (!nowPlaying || nowPlaying.song !== nowPlayingForBack.song)
+        nowPlayingForBack.durationMs &&
+        (!nowPlaying ||
+          nowPlaying.song !== nowPlayingForBack.song ||
+          !nowPlaying.durationMs)
       ) {
         setNowPlaying(nowPlayingForBack);
+        setProgress(nowPlayingForBack.progressMs || 0);
       }
     }, [nowPlayingForBack, nowPlaying, setNowPlaying]);
+
+    useEffect(() => {
+      if (!nowPlaying || !nowPlaying.durationMs) return;
+
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev + 1000;
+
+          return newProgress >= nowPlaying.durationMs
+            ? nowPlaying.durationMs
+            : newProgress;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, [nowPlaying]);
 
     const handleClick = () => setIsFlipped((prevState) => !prevState);
 
@@ -116,6 +137,7 @@ export function withClick(FrontComponent, BackComponent) {
               <FrontComponent
                 {...props}
                 setNowPlayingForBack={setNowPlayingForBack}
+                progress={progress}
                 style={{ width: "100%", height: "100%" }}
               />
             </motion.div>

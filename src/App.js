@@ -16,7 +16,7 @@ function AppContent() {
     <div className="App bg-[#222] grid place-content-center h-[100dvh]">
       <div
         className="w-[300px] hover:cursor-pointer"
-        style={{ height: nowPlaying ? "396px" : "112px" }}
+        style={{ height: nowPlaying ? "436px" : "112px" }}
       >
         <ClickableCard />
       </div>

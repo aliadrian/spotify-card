@@ -64,6 +64,8 @@ export const fetchNowPlaying = async () => {
       song: data.item.name,
       artist: data.item.artists.map((artist) => artist.name).join(", "),
       albumArt: data.item.album.images[0].url,
+      durationMs: data.item.duration_ms,
+      progressMs: data.progress_ms,
     };
   } catch (error) {
     console.error("Error fetching now playing:", error);
