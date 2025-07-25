@@ -20,7 +20,6 @@ function AppContent() {
       >
         <ClickableCard />
       </div>
-      <TiltCard />
     </div>
   );
 }

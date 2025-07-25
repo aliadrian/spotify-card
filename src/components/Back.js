@@ -9,7 +9,7 @@ const BackSide = ({ nowPlaying }) => {
     <div
       className="w-[275] bg-white p-4 rounded-lg drop-shadow-xl shadow-xl flex flex-col items-center justify-end"
       id="back-side"
-      style={{ height: nowPlaying ? `410px` : "auto" }}
+      style={{ height: nowPlaying ? `483px` : "auto" }}
     >
       <button
         className="relative inline-block w-32 leading-[2.5em] m-5 cursor-pointer overflow-hidden border-2 border-[#333]
