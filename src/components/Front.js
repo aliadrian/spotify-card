@@ -37,7 +37,7 @@ const FrontSide = ({ setNowPlayingForBack, progress, setFrontHeight }) => {
 
   return (
     <div
-      className="bg-white p-4 rounded-lg w-[300px] drop-shadow-xl shadow-xl"
+      className="bg-white p-4 rounded-lg w-[275px] drop-shadow-xl shadow-xl"
       id="front-side"
     >
       <div className="flex mb-4 gap-2">
