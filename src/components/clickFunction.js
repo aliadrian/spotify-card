@@ -18,6 +18,7 @@ export function withClick(FrontComponent, BackComponent) {
     const ref = useRef(null);
     const { isMobile, tilt } = useMobileDetectionAndTilt(); // Detect mobile + tilt
     const [progress, setProgress] = useState(nowPlaying?.progrssMs || 0);
+    const [frontHeight, setFrontHeight] = useState(null);
 
     useEffect(() => {
       // Prevent infinite loop: update only if `nowPlayingForBack` is valid and different
@@ -139,6 +140,7 @@ export function withClick(FrontComponent, BackComponent) {
                 setNowPlayingForBack={setNowPlayingForBack}
                 progress={progress}
                 style={{ width: "100%", height: "100%" }}
+                setFrontHeight={setFrontHeight}
               />
             </motion.div>
             <motion.div
@@ -157,6 +159,7 @@ export function withClick(FrontComponent, BackComponent) {
                 {...props}
                 nowPlaying={nowPlayingForBack}
                 style={{ width: "100%", height: "100%" }}
+                frontHeight={frontHeight}
               />
             </motion.div>
           </div>

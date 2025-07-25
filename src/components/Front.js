@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SpotifyLogo from "./SpotifyLogo";
 import { fetchNowPlaying } from "./services/spotifyService";
 
 const FrontSide = ({ setNowPlayingForBack, progress, setFrontHeight }) => {
   const [nowPlaying, setNowPlaying] = useState(null);
+  const frontRef = useRef(null);
 
   useEffect(() => {
     const getNowPlaying = async () => {
@@ -11,9 +12,16 @@ const FrontSide = ({ setNowPlayingForBack, progress, setFrontHeight }) => {
         const song = await fetchNowPlaying();
         // console.log("Fetched song:", song);
 
-        if (song) {
+        if (song && frontRef.current) {
           setNowPlaying(song); // Updates local state
           setNowPlayingForBack(song); // Sends data to BackSide.js via `withClick.js`
+          const height = frontRef.current.offsetHeight;
+          setFrontHeight?.(height);
+          // console.log(
+          //   "Frontside height: ",
+          //   frontRef.current.offsetHeight,
+          //   "px"
+          // );
         }
       } catch (error) {
         console.error("Error fetching Spotify data:", error);
@@ -39,6 +47,7 @@ const FrontSide = ({ setNowPlayingForBack, progress, setFrontHeight }) => {
     <div
       className="bg-white p-4 rounded-lg w-[275px] drop-shadow-xl shadow-xl"
       id="front-side"
+      ref={frontRef}
     >
       <div className="flex mb-4 gap-2">
         <SpotifyLogo />
