@@ -13,12 +13,10 @@ const spring = {
 export function withClick(FrontComponent, BackComponent) {
   return function (props) {
     const { nowPlaying, setNowPlaying } = useNowPlaying();
-    const [isFlipped, setIsFlipped] = useState(false);
     const [nowPlayingForBack, setNowPlayingForBack] = useState(null);
     const ref = useRef(null);
     const { isMobile, tilt } = useMobileDetectionAndTilt(); // Detect mobile + tilt
     const [progress, setProgress] = useState(nowPlaying?.progrssMs || 0);
-    const [frontHeight, setFrontHeight] = useState(null);
 
     useEffect(() => {
       // Prevent infinite loop: update only if `nowPlayingForBack` is valid and different
@@ -49,8 +47,6 @@ export function withClick(FrontComponent, BackComponent) {
 
       return () => clearInterval(interval);
     }, [nowPlaying]);
-
-    const handleClick = () => setIsFlipped((prevState) => !prevState);
 
     // 🖱️ Motion values for rotation
     const dx = useSpring(0, spring);
@@ -84,7 +80,7 @@ export function withClick(FrontComponent, BackComponent) {
       }
     };
 
-    // 🎯 Apply correct rotation: Desktop (Mouse Hover) vs Mobile (Device Orientation)
+    // Apply correct rotation: Desktop (Mouse Hover) vs Mobile (Device Orientation)
     useEffect(() => {
       if (isMobile) {
         dx.set(-tilt.y);
@@ -94,7 +90,6 @@ export function withClick(FrontComponent, BackComponent) {
 
     return (
       <motion.div
-        onClick={handleClick}
         transition={spring}
         style={{
           perspective: "1200px",
@@ -125,12 +120,10 @@ export function withClick(FrontComponent, BackComponent) {
             }}
           >
             <motion.div
-              animate={{ rotateY: isFlipped ? -180 : 0 }}
               transition={spring}
               style={{
                 width: "100%",
                 height: "100%",
-                zIndex: isFlipped ? 0 : 1,
                 backfaceVisibility: "hidden",
                 position: "absolute",
               }}
@@ -140,28 +133,18 @@ export function withClick(FrontComponent, BackComponent) {
                 setNowPlayingForBack={setNowPlayingForBack}
                 progress={progress}
                 style={{ width: "100%", height: "100%" }}
-                setFrontHeight={setFrontHeight}
               />
             </motion.div>
             <motion.div
               initial={{ rotateY: 180 }}
-              animate={{ rotateY: isFlipped ? 0 : 180 }}
               transition={spring}
               style={{
                 width: "100%",
                 height: "100%",
-                zIndex: isFlipped ? 1 : 0,
                 backfaceVisibility: "hidden",
                 position: "absolute",
               }}
-            >
-              <BackComponent
-                {...props}
-                nowPlaying={nowPlayingForBack}
-                style={{ width: "100%", height: "100%" }}
-                frontHeight={frontHeight}
-              />
-            </motion.div>
+            ></motion.div>
           </div>
         </motion.div>
       </motion.div>

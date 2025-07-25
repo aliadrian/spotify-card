@@ -59,7 +59,7 @@ export const fetchNowPlaying = async () => {
     const data = await response.json();
     if (!data.item) return null;
 
-    console.log("🎵 Now Playing:", data.item.name);
+    console.log("Now Playing:", data.item.name);
     return {
       song: data.item.name,
       artist: data.item.artists.map((artist) => artist.name).join(", "),
