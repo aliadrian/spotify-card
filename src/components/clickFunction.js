@@ -83,7 +83,7 @@ export function withClick(FrontComponent, BackComponent) {
       }
     };
 
-    // Apply correct rotation: Desktop (Mouse Hover) vs Mobile (Device Orientation)
+    // 🎯 Apply correct rotation: Desktop (Mouse Hover) vs Mobile (Device Orientation)
     useEffect(() => {
       if (isMobile) {
         dx.set(-tilt.y);

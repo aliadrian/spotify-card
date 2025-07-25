@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import SpotifyLogo from "./SpotifyLogo";
 import { fetchNowPlaying } from "./services/spotifyService";
-import TiltCard from "./TiltCard";
 
 const FrontSide = ({ setNowPlayingForBack, progress, setFrontHeight }) => {
   const [nowPlaying, setNowPlaying] = useState(null);
-  const [permissionGranted, setPermissionGranted] = useState(false);
 
   useEffect(() => {
     const getNowPlaying = async () => {
@@ -88,7 +86,6 @@ const FrontSide = ({ setNowPlayingForBack, progress, setFrontHeight }) => {
           </p> // Safe fallback
         )}
       </div>
-      <TiltCard onPermissionGranted={setPermissionGranted} />
     </div>
   );
 };

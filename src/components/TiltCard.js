@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useMobileDetectionAndTilt from "./useMobileDetectionAndTilt";
 
-const TiltCard = ({ onPermissionGranted }) => {
+const TiltCard = () => {
   const { isMobile, tilt, hasPermission, requestPermission } =
     useMobileDetectionAndTilt();
   const [showReloadButton, setShowReloadButton] = useState(
@@ -11,10 +11,9 @@ const TiltCard = ({ onPermissionGranted }) => {
 
   useEffect(() => {
     if (hasPermission && localStorage.getItem("hasReloaded") !== "true") {
-      onPermissionGranted(true);
       setShowReloadButton(true); // Show reload button after enabling tilt
     }
-  }, [hasPermission, onPermissionGranted]);
+  }, [hasPermission]);
 
   const handleReload = () => {
     localStorage.setItem("hasReloaded", "true"); // Save that reload has happened
@@ -23,7 +22,7 @@ const TiltCard = ({ onPermissionGranted }) => {
   };
 
   return (
-    <div className="grid place-content-center">
+    <div className="grid place-content-center translate-y-[5vh]">
       <div className="flex items-center justify-center">
         {isMobile && !hasPermission && (
           <button
